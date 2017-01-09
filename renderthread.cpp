@@ -1,39 +1,48 @@
 #include "renderthread.h"
-#include <QImage>
+
+#include <QtWidgets>
+#include <cmath>
 
 RenderThread::RenderThread(QObject *parent)
     : QThread(parent)
 {
+    //initialisation des variables qui controlent le flux de lancement de la thread
     restart = false;
     abort = false;
 
+    //initialisation de l'ensemble des couleurs utilises
     for (int i = 0; i < ColormapSize; ++i)
         colormap[i] = rgbFromWaveLength(380.0 + (i * 400.0 / ColormapSize));
 }
 
 RenderThread::~RenderThread()
 {
-    mutex.lock();
-    abort = true;
-    condition.wakeOne();
-    mutex.unlock();
+    //Quand la thread est detruite
+    mutex.lock(); // Bloque les variables de la thread
+    abort = true; //Booleen indiquant la fin de la thread
+    condition.wakeOne(); //On reveille la thread si elle avait ete mise en pause
+    mutex.unlock(); //debloque les variables
 
-    wait();
+    wait(); //Attend fin de la fonction run pour terminer la destruction
 }
 
 void RenderThread::render(double centerX, double centerY, double scaleFactor,
                           QSize resultSize)
 {
+    //Fonction appelee par l'interface, pour creer un nouvel ensemble
+
     QMutexLocker locker(&mutex);
 
     this->centerX = centerX;
     this->centerY = centerY;
     this->scaleFactor = scaleFactor;
-    this->resultSize = resultSize;
+    this->resultSize = resultSize; //Taille de la Qimage
 
     if (!isRunning()) {
+        // Si pas de thread en cours, on en lance un
         start(LowPriority);
     } else {
+        // Sinon, on dit à la fonction run de s'arreter et de recommencer avec les nouveaux parametres
         restart = true;
         condition.wakeOne();
     }
@@ -41,7 +50,10 @@ void RenderThread::render(double centerX, double centerY, double scaleFactor,
 
 void RenderThread::run()
 {
+    // Qt keyword a la place de foreach
     forever {
+        // Variables locales pour minimiser l'utilisation du mutex qui bloque l'acces aux variables aux autres thread
+        // Permet de modifier les variables de calcul de la fractale avec la fonction render plus facilement
         mutex.lock();
         QSize resultSize = this->resultSize;
         double scaleFactor = this->scaleFactor;
@@ -53,7 +65,7 @@ void RenderThread::run()
         int halfHeight = resultSize.height() / 2;
         QImage image(resultSize, QImage::Format_RGB32);
 
-        const int NumPasses = 24;
+        const int NumPasses = 8;
         int pass = 0;
         while (pass < NumPasses) {
             const int MaxIterations = (1 << (2 * pass + 6)) + 32;
@@ -72,8 +84,8 @@ void RenderThread::run()
 
                 for (int x = -halfWidth; x < halfWidth; ++x) {
                     double ax = centerX + (x * scaleFactor);
-                    double a1 = ax;
-                    double b1 = ay;
+                    double a1 = 0.0;//ax;
+                    double b1 = 0.0;//ay;
                     int numIterations = 0;
 
                     do {
@@ -90,6 +102,20 @@ void RenderThread::run()
                             break;
                     } while (numIterations < MaxIterations);
 
+                    /*do {
+                        ++numIterations;
+                        double a2 = (a1 * a1 * a1) - (3 * a1 * b1 * b1) + ax;
+                        double b2 = (3 * a1 * a1 * b1) - (b1 * b1 * b1) + ay;
+                        if ((a2 * a2) + (b2 * b2) > Limit)
+                            break;
+
+                        ++numIterations;
+                        a1 = (a2 * a2 * a2) - (3 * a2 * b2 * b2) + ax;
+                        b1 = (3 * a2 * a2 * b2) - (b2 * b2 * b2) + ay;
+                        if ((a1 * a1) + (b1 * b1) > Limit)
+                            break;
+                    } while (numIterations < MaxIterations);*/
+
                     if (numIterations < MaxIterations) {
                         *scanLine++ = colormap[numIterations % ColormapSize];
                         allBlack = false;
@@ -103,21 +129,20 @@ void RenderThread::run()
                 pass = 4;
             } else {
                 if (!restart)
-                    emit renderedImage(image, scaleFactor);
+                    emit renderedImage(image, scaleFactor); // signal de fin de creation de l'image
                 ++pass;
             }
         }
 
         mutex.lock();
         if (!restart)
-            condition.wait(&mutex);
+            condition.wait(&mutex); // met en pause le thread en attendant nouveaux parametres
         restart = false;
         mutex.unlock();
-
-       }
+    }
 }
 
-
+// Fonction creant l'ensemble des couleurs utilisees
 uint RenderThread::rgbFromWaveLength(double wave)
 {
     double r = 0.0;
@@ -154,5 +179,3 @@ uint RenderThread::rgbFromWaveLength(double wave)
     b = std::pow(b * s, 0.8);
     return qRgb(int(r * 255), int(g * 255), int(b * 255));
 }
-
-

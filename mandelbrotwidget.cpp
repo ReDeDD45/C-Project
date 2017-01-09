@@ -7,10 +7,11 @@ const double ZoomOutFactor = 1 / ZoomInFactor;
 const int ScrollStep = 20;
 
 #include "mandelbrotwidget.h"
-#include "ui_mainwindow.h"
+
 
 #include <QPainter>
 #include <QKeyEvent>
+#include <math.h>
 
 MandelbrotWidget::MandelbrotWidget(QWidget *parent)
     : QWidget(parent)
