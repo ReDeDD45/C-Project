@@ -35,6 +35,7 @@ public:
     }
 
     int IsConvergent() {
+
         int i = 1;
         while ((uCurrent.GetRadius() < 2) && (i <= N)) {
 
@@ -49,7 +50,38 @@ public:
         else {
             return i;
         }
+
+
+
+
+
+
+//    int numIterations = 0;
+
+//    do {
+//        ++numIterations;
+//        this->Next();
+//        if (uCurrent.GetRadius() >= 2.0)
+//            break;
+
+////        ++numIterations;
+////        this->Next();
+////        if (uCurrent.GetRadius() < 2)
+////            break;
+//    } while (numIterations <= N);
+
+//    if (numIterations > N)
+//        return 0;
+//    else
+//        return numIterations;
+
+    //return numIterations;
+
+
+
+
     }
+
 };
 
 #endif

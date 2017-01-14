@@ -1,7 +1,10 @@
 #include "renderthread.h"
+#include "complex.h"
+#include "recseqbrot.h"
 
 #include <QtWidgets>
 #include <cmath>
+#include <math.h>
 
 RenderThread::RenderThread(QObject *parent)
     : QThread(parent)
@@ -68,8 +71,9 @@ void RenderThread::run()
         const int NumPasses = 8;
         int pass = 0;
         while (pass < NumPasses) {
-            const int MaxIterations = (1 << (2 * pass + 6)) + 32;
-            const int Limit = 4;
+            const int MaxIterations = (1 << (2 * pass + 6)) + 32; // = pow(2, 2*pass + 7) + 32
+            //const int Limit = 4;
+            const int powerValue = 2;
             bool allBlack = true;
 
             for (int y = -halfHeight; y < halfHeight; ++y) {
@@ -83,40 +87,20 @@ void RenderThread::run()
                 double ay = centerY + (y * scaleFactor);
 
                 for (int x = -halfWidth; x < halfWidth; ++x) {
+
                     double ax = centerX + (x * scaleFactor);
-                    double a1 = 0.0;//ax;
-                    double b1 = 0.0;//ay;
-                    int numIterations = 0;
 
-                    do {
-                        ++numIterations;
-                        double a2 = (a1 * a1) - (b1 * b1) + ax;
-                        double b2 = (2 * a1 * b1) + ay;
-                        if ((a2 * a2) + (b2 * b2) > Limit)
-                            break;
+                    Complex cTest;
+                    cTest = Complex::FromCartesian(ax, ay);
 
-                        ++numIterations;
-                        a1 = (a2 * a2) - (b2 * b2) + ax;
-                        b1 = (2 * a2 * b2) + ay;
-                        if ((a1 * a1) + (b1 * b1) > Limit)
-                            break;
-                    } while (numIterations < MaxIterations);
+                    RecSeqBrot seqToTest = RecSeqBrot(Complex::FromCartesian(0,0),MaxIterations,cTest,powerValue);
+                    //u(n+1) = u(n)² + cTest
+                    //u0 = 0
 
-                    /*do {
-                        ++numIterations;
-                        double a2 = (a1 * a1 * a1) - (3 * a1 * b1 * b1) + ax;
-                        double b2 = (3 * a1 * a1 * b1) - (b1 * b1 * b1) + ay;
-                        if ((a2 * a2) + (b2 * b2) > Limit)
-                            break;
+                    int numIterations = seqToTest.IsConvergent();
 
-                        ++numIterations;
-                        a1 = (a2 * a2 * a2) - (3 * a2 * b2 * b2) + ax;
-                        b1 = (3 * a2 * a2 * b2) - (b2 * b2 * b2) + ay;
-                        if ((a1 * a1) + (b1 * b1) > Limit)
-                            break;
-                    } while (numIterations < MaxIterations);*/
 
-                    if (numIterations < MaxIterations) {
+                    if (numIterations > 0) {
                         *scanLine++ = colormap[numIterations % ColormapSize];
                         allBlack = false;
                     } else {

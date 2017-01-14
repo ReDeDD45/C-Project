@@ -1,5 +1,11 @@
 #include "mandelbrotwidget.h"
+
+
 #include <QApplication>
+#include <iostream>
+
+#include "recseqbrot.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -7,4 +13,5 @@ int main(int argc, char *argv[])
     MandelbrotWidget widget;
     widget.show();
     return app.exec();
+
 }

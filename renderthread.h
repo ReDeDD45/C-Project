@@ -6,6 +6,7 @@
 #include <QMutex>
 #include <QWaitCondition>
 
+
 class RenderThread : public QThread
 {
     Q_OBJECT
