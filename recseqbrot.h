@@ -30,14 +30,15 @@ public:
 
     void Next() {
 
-        uCurrent = (uCurrent.Pow(nPower) + c);
+        uCurrent = ((uCurrent.Pow(nPower)) + c);
 
     }
 
     int IsConvergent() {
 
-        int i = 1;
+        int i = 0;
         while ((uCurrent.GetRadius() < 2) && (i <= N)) {
+
 
             this->Next();
             i++;
@@ -53,7 +54,7 @@ public:
 
 
 
-
+}
 
 
 //    int numIterations = 0;
@@ -61,26 +62,18 @@ public:
 //    do {
 //        ++numIterations;
 //        this->Next();
-//        if (uCurrent.GetRadius() >= 2.0)
+//        if (uCurrent.GetRadius() > 2.0)
 //            break;
 
-////        ++numIterations;
-////        this->Next();
-////        if (uCurrent.GetRadius() < 2)
-////            break;
+//        ++numIterations;
+//        this->Next();
+//        if (uCurrent.GetRadius() < 2)
+//            break;
 //    } while (numIterations <= N);
 
-//    if (numIterations > N)
-//        return 0;
-//    else
-//        return numIterations;
+//    return numIterations;
 
-    //return numIterations;
-
-
-
-
-    }
+//    }
 
 };
 
