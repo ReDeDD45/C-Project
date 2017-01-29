@@ -18,10 +18,18 @@ public:
         N = 10000;
     }
 
+    ~RecSequence() {
+
+    }
+
     RecSequence(Complex& u0Source, int NSource) {
         u0 = u0Source;
         uCurrent = u0;
         N = NSource;
+    }
+
+    void SetUCurrent(Complex& uSource){
+        uCurrent = uSource;
     }
 
     virtual void Next() = 0;

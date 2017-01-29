@@ -111,7 +111,7 @@ void RenderThread::run()
 
                     //qDebug() << "Nombre d'itérations : " << numIterations;
 
-                    int numIterations = getIterations(ax, ay, Limit, MaxIterations);
+                    int numIterations = getIterations(ax, ay, MaxIterations);
 
 
                     if (numIterations < MaxIterations) {
@@ -178,24 +178,33 @@ uint RenderThread::rgbFromWaveLength(double wave)
     return qRgb(int(r * 255), int(g * 255), int(b * 255));
 }
 
-int RenderThread::getIterations(double& ax, double& ay, int Limit, int MaxIterations){
+int RenderThread::getIterations(double& ax, double& ay, int MaxIterations){
 
-    double a1 = ax;
-    double b1 = ay;
-    int numIterations = 0;
-    do {
-        ++numIterations;
-        double a2 = (a1 * a1) - (b1 * b1) + ax;
-        double b2 = (2 * a1 * b1) + ay;
-        if ((a2 * a2) + (b2 * b2) > Limit)
-            break;
+    Complex z0; //=0
+    Complex c = Complex::FromCartesian(ax,ay);
 
-        ++numIterations;
-        a1 = (a2 * a2) - (b2 * b2) + ax;
-        b1 = (2 * a2 * b2) + ay;
-        if ((a1 * a1) + (b1 * b1) > Limit)
-            break;
-    } while (numIterations < MaxIterations);
+    RecSeqBrot currentSequence(z0,MaxIterations,c,2);
+
+//    double a1 = ax;
+//    double b1 = ay;
+//    int numIterations = 0;
+//    do {
+//        ++numIterations;
+//        double a2 = (a1 * a1) - (b1 * b1) + ax;
+//        double b2 = (2 * a1 * b1) + ay;
+//        if ((a2 * a2) + (b2 * b2) > Limit)
+//            break;
+
+//        ++numIterations;
+//        a1 = (a2 * a2) - (b2 * b2) + ax;
+//        b1 = (2 * a2 * b2) + ay;
+//        if ((a1 * a1) + (b1 * b1) > Limit)
+//            break;
+//    } while (numIterations < MaxIterations);
+
+    int numIterations = currentSequence.IsConvergent();
+
+    currentSequence.~RecSeqBrot();
 
     return numIterations;
 }

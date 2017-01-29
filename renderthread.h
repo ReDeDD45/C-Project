@@ -26,7 +26,7 @@ protected:
 
 private:
     uint rgbFromWaveLength(double wave);
-    int getIterations(double& ax, double& ay, int Limit, int MaxIterations);
+    int getIterations(double& ax, double& ay, int MaxIterations);
 
     QMutex mutex;
     QWaitCondition condition;

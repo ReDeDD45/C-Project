@@ -14,6 +14,12 @@ Complex::Complex()
     _imaginary = 0;
 }
 
+//Default destructor
+Complex::~Complex()
+{
+
+}
+
 //Private constructor
 Complex::Complex(double r, double im)
 {
@@ -43,12 +49,6 @@ Complex::Complex(const Complex& source)
 {
     _real = source._real;
     _imaginary = source._imaginary;
-}
-
-//Destructor
-Complex::~Complex(void)
-{
-
 }
 
 // Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°  Getters & Setters Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°Â°
