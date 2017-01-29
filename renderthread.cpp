@@ -6,7 +6,7 @@
 
 #include <QtWidgets>
 #include <cmath>
-#include <math.h>
+
 #include <QtDebug>
 
 
@@ -72,14 +72,15 @@ void RenderThread::run()
         int halfHeight = resultSize.height() / 2;
         QImage image(resultSize, QImage::Format_RGB32);
 
-        Complex cTest;
+        //Complex cTest;
 
         const int NumPasses = 8;
         int pass = 0;
         while (pass < NumPasses) {
+
             const int MaxIterations = (1 << (2 * pass + 6)) + 32; // = pow(2, 2*pass + 7) + 32
             const int Limit = 4;
-            const int powerValue = 2;
+            // const int powerValue = 2;
             bool allBlack = true;
 
             for (int y = -halfHeight; y < halfHeight; ++y) {
@@ -97,37 +98,38 @@ void RenderThread::run()
                     double ax = centerX + (x * scaleFactor);
 
 
-                    cTest.SetImaginary(ay);
-                    cTest.SetReal(ax);
+//                    cTest.SetImaginary(ay);
+//                    cTest.SetReal(ax);
 //                    Complex::FromCartesian(ax, ay);
 
-                    RecSeqBrot seqToTest(Complex::FromCartesian(0,0),MaxIterations,cTest,powerValue);
+//                    RecSeqBrot seqToTest(Complex::FromCartesian(0,0),MaxIterations,cTest,powerValue);
                     //u(n+1) = u(n)² + cTest
                     //u0 = 0
 
-                    int numIterations = seqToTest.IsConvergent();
+ //                   int numIterations = seqToTest.IsConvergent();
 
 //                    qDebug() << "Nombre d'itérations : " << numIterations;
 //                    qDebug() << "Max itérations : " << MaxIterations;
 
 
-//                    double a1 = 0.0;//ax;
-//                    double b1 = 0.0;//ay;
-//                    int numIterations = 0;
+                    double a1 = 0.0;//ax;
+                    double b1 = 0.0;//ay;
 
-//                    do {
-//                        ++numIterations;
-//                        double a2 = (a1 * a1) - (b1 * b1) + ax;
-//                        double b2 = (2 * a1 * b1) + ay;
-//                        if ((a2 * a2) + (b2 * b2) > Limit)
-//                            break;
+                    int numIterations = 0;
 
-//                        ++numIterations;
-//                        a1 = (a2 * a2) - (b2 * b2) + ax;
-//                        b1 = (2 * a2 * b2) + ay;
-//                        if ((a1 * a1) + (b1 * b1) > Limit)
-//                            break;
-//                    } while (numIterations < MaxIterations);
+                    do {
+                        ++numIterations;
+                        double a2 = (a1 * a1) - (b1 * b1) + ax;
+                        double b2 = (2 * a1 * b1) + ay;
+                        if ((a2 * a2) + (b2 * b2) > Limit)
+                            break;
+
+                        ++numIterations;
+                        a1 = (a2 * a2) - (b2 * b2) + ax;
+                        b1 = (2 * a2 * b2) + ay;
+                        if ((a1 * a1) + (b1 * b1) > Limit)
+                            break;
+                    } while (numIterations < MaxIterations);
 
 
 
@@ -137,7 +139,7 @@ void RenderThread::run()
 
 
 
-                    if (numIterations > 0) {
+                    if (numIterations < MaxIterations) {
                         *scanLine++ = colormap[numIterations % ColormapSize];
                         allBlack = false;
                     } else {

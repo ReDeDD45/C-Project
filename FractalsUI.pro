@@ -22,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH = "C:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"
 
 SOURCES += main.cpp \
     mandelbrotwidget.cpp \

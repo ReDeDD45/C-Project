@@ -10,7 +10,7 @@ const int ScrollStep = 20;
 
 #include <QPainter>
 #include <QKeyEvent>
-#include <math.h>
+#include <cmath>
 
 MandelbrotWidget::MandelbrotWidget(QWidget *parent)
     : QWidget(parent)
