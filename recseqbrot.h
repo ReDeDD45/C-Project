@@ -32,6 +32,14 @@ public:
 
     }
 
+    void SetCValue(Complex& cSource) {
+        c = cSource;
+    }
+
+    void SetNPowerValue(int nPowerSource) {
+        nPower = nPowerSource;
+    }
+
     void Next() {
 
         uCurrent = ((uCurrent.Pow(nPower)) + c);

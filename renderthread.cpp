@@ -17,6 +17,10 @@ RenderThread::RenderThread(QObject *parent)
     //initialisation de l'ensemble des couleurs utilises
     for (int i = 0; i < ColormapSize; ++i)
         colormap[i] = rgbFromWaveLength(380.0 + (i * 400.0 / ColormapSize));
+
+    //Creation de la Séquence de base
+    currentSequence.SetU0(Complex());
+    currentSequence.SetNPowerValue(2);
 }
 
 RenderThread::~RenderThread()
@@ -74,8 +78,9 @@ void RenderThread::run()
         while (pass < NumPasses) {
 
             const int MaxIterations = (1 << (2 * pass + 6)) + 32; // = pow(2, 2*pass + 7) + 32
-            const int Limit = 4;
-            const int powerValue = 2;
+
+            this->SetMaxIterationsValue(MaxIterations);
+
             bool allBlack = true;
 
 //            Complex cTest, c0;
@@ -95,23 +100,12 @@ void RenderThread::run()
 
                     double ax = centerX + (x * scaleFactor);
 
-//                    cTest.SetImaginary(ay);
-//                    cTest.SetReal(ax);
 
-                    //currentSequence = RecSeqBrot(c0,MaxIterations,cTest,powerValue);
-
-                    //u(n+1) = u(n)² + cTest
-                    //u0 = 0
-
- //                   int numIterations = seqToTest.IsConvergent();
 
 //                    qDebug() << "Nombre d'itérations : " << numIterations;
 //                    qDebug() << "Max itérations : " << MaxIterations;
 
-
-                    //qDebug() << "Nombre d'itérations : " << numIterations;
-
-                    int numIterations = getIterations(ax, ay, MaxIterations);
+                    int numIterations = getIterations(ax, ay);
 
 
                     if (numIterations < MaxIterations) {
@@ -178,12 +172,22 @@ uint RenderThread::rgbFromWaveLength(double wave)
     return qRgb(int(r * 255), int(g * 255), int(b * 255));
 }
 
-int RenderThread::getIterations(double& ax, double& ay, int MaxIterations){
+void RenderThread::SetCValue(double& ax, double& ay){
 
-    Complex z0; //=0
-    Complex c = Complex::FromCartesian(ax,ay);
+    currentSequence.SetCValue(Complex::FromCartesian(ax,ay));
 
-    RecSeqBrot currentSequence(z0,MaxIterations,c,2);
+}
+
+void RenderThread::SetMaxIterationsValue(int MaxIterations){
+
+    currentSequence.SetN(MaxIterations);
+
+}
+
+
+int RenderThread::getIterations(double& ax, double& ay){
+
+    this->SetCValue(ax,ay);
 
 //    double a1 = ax;
 //    double b1 = ay;
@@ -203,8 +207,6 @@ int RenderThread::getIterations(double& ax, double& ay, int MaxIterations){
 //    } while (numIterations < MaxIterations);
 
     int numIterations = currentSequence.IsConvergent();
-
-    currentSequence.~RecSeqBrot();
 
     return numIterations;
 }

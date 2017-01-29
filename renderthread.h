@@ -26,7 +26,9 @@ protected:
 
 private:
     uint rgbFromWaveLength(double wave);
-    int getIterations(double& ax, double& ay, int MaxIterations);
+    int getIterations(double& ax, double& ay);
+    void SetCValue(double& ax, double& ay);
+    void SetMaxIterationsValue(int MaxIterations);
 
     QMutex mutex;
     QWaitCondition condition;
@@ -36,6 +38,8 @@ private:
     QSize resultSize;
     bool restart;
     bool abort;
+
+    RecSeqBrot currentSequence;
 
     enum { ColormapSize = 512 };
     uint colormap[ColormapSize];

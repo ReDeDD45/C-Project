@@ -28,8 +28,16 @@ public:
         N = NSource;
     }
 
+    void SetU0(Complex& uSource){
+        u0 = uSource;
+    }
+
     void SetUCurrent(Complex& uSource){
         uCurrent = uSource;
+    }
+
+    void SetN(int NSource){
+        N = NSource;
     }
 
     virtual void Next() = 0;
