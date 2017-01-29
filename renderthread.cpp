@@ -1,12 +1,9 @@
 #include "renderthread.h"
-
 #include "complex.h"
 #include "recseqbrot.h"
 
-
 #include <QtWidgets>
 #include <cmath>
-
 #include <QtDebug>
 
 
@@ -111,28 +108,7 @@ void RenderThread::run()
 //                    qDebug() << "Nombre d'itérations : " << numIterations;
 //                    qDebug() << "Max itérations : " << MaxIterations;
 
-
-                    double a1 = 0.0;//ax;
-                    double b1 = 0.0;//ay;
-
-                    int numIterations = 0;
-
-                    do {
-                        ++numIterations;
-                        double a2 = (a1 * a1) - (b1 * b1) + ax;
-                        double b2 = (2 * a1 * b1) + ay;
-                        if ((a2 * a2) + (b2 * b2) > Limit)
-                            break;
-
-                        ++numIterations;
-                        a1 = (a2 * a2) - (b2 * b2) + ax;
-                        b1 = (2 * a2 * b2) + ay;
-                        if ((a1 * a1) + (b1 * b1) > Limit)
-                            break;
-                    } while (numIterations < MaxIterations);
-
-
-
+                    int numIterations = getIterations(ax,ay, Limit, MaxIterations);
 
                     //qDebug() << "Nombre d'itérations : " << numIterations;
 
@@ -201,4 +177,26 @@ uint RenderThread::rgbFromWaveLength(double wave)
     g = std::pow(g * s, 0.8);
     b = std::pow(b * s, 0.8);
     return qRgb(int(r * 255), int(g * 255), int(b * 255));
+}
+
+int getIterations(double ax, double ay, double Limit, int MaxIterations){
+
+    double a1 = ax;
+    double b1 = ay;
+    int numIterations = 0;
+    do {
+        ++numIterations;
+        double a2 = (a1 * a1) - (b1 * b1) + ax;
+        double b2 = (2 * a1 * b1) + ay;
+        if ((a2 * a2) + (b2 * b2) > Limit)
+            break;
+
+        ++numIterations;
+        a1 = (a2 * a2) - (b2 * b2) + ax;
+        b1 = (2 * a2 * b2) + ay;
+        if ((a1 * a1) + (b1 * b1) > Limit)
+            break;
+    } while (numIterations < MaxIterations);
+
+    return numIterations;
 }

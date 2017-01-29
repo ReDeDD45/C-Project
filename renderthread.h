@@ -6,7 +6,6 @@
 #include <QMutex>
 #include <QWaitCondition>
 
-
 class RenderThread : public QThread
 {
     Q_OBJECT
@@ -39,5 +38,6 @@ private:
     uint colormap[ColormapSize];
 };
 
+int getIterations(double ax, double ay, double Limit, int MaxIterations);
 
 #endif // RENDERTHREAD_H
