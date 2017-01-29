@@ -69,16 +69,17 @@ void RenderThread::run()
         int halfHeight = resultSize.height() / 2;
         QImage image(resultSize, QImage::Format_RGB32);
 
-        //Complex cTest;
-
         const int NumPasses = 8;
         int pass = 0;
         while (pass < NumPasses) {
 
             const int MaxIterations = (1 << (2 * pass + 6)) + 32; // = pow(2, 2*pass + 7) + 32
             const int Limit = 4;
-            // const int powerValue = 2;
+            const int powerValue = 2;
             bool allBlack = true;
+
+//            Complex cTest, c0;
+//            c0 = Complex::FromCartesian(0,0);
 
             for (int y = -halfHeight; y < halfHeight; ++y) {
                 if (restart)
@@ -94,12 +95,11 @@ void RenderThread::run()
 
                     double ax = centerX + (x * scaleFactor);
 
-
 //                    cTest.SetImaginary(ay);
 //                    cTest.SetReal(ax);
-//                    Complex::FromCartesian(ax, ay);
 
-//                    RecSeqBrot seqToTest(Complex::FromCartesian(0,0),MaxIterations,cTest,powerValue);
+                    //currentSequence = RecSeqBrot(c0,MaxIterations,cTest,powerValue);
+
                     //u(n+1) = u(n)² + cTest
                     //u0 = 0
 
@@ -108,11 +108,10 @@ void RenderThread::run()
 //                    qDebug() << "Nombre d'itérations : " << numIterations;
 //                    qDebug() << "Max itérations : " << MaxIterations;
 
-                    int numIterations = getIterations(ax,ay, Limit, MaxIterations);
 
                     //qDebug() << "Nombre d'itérations : " << numIterations;
 
-
+                    int numIterations = getIterations(ax, ay, Limit, MaxIterations);
 
 
                     if (numIterations < MaxIterations) {
@@ -179,7 +178,7 @@ uint RenderThread::rgbFromWaveLength(double wave)
     return qRgb(int(r * 255), int(g * 255), int(b * 255));
 }
 
-int getIterations(double ax, double ay, double Limit, int MaxIterations){
+int RenderThread::getIterations(double& ax, double& ay, int Limit, int MaxIterations){
 
     double a1 = ax;
     double b1 = ay;

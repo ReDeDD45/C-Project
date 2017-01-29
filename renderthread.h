@@ -6,6 +6,8 @@
 #include <QMutex>
 #include <QWaitCondition>
 
+#include "recseqbrot.h"
+
 class RenderThread : public QThread
 {
     Q_OBJECT
@@ -24,6 +26,7 @@ protected:
 
 private:
     uint rgbFromWaveLength(double wave);
+    int getIterations(double& ax, double& ay, int Limit, int MaxIterations);
 
     QMutex mutex;
     QWaitCondition condition;
@@ -38,6 +41,6 @@ private:
     uint colormap[ColormapSize];
 };
 
-int getIterations(double ax, double ay, double Limit, int MaxIterations);
+
 
 #endif // RENDERTHREAD_H
