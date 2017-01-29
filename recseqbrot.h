@@ -5,31 +5,54 @@
 #include "Complex.h"
 
 
-class RecSeqBrot :
-        public RecSequence
-{
+class RecSeqBrot {
+
 private:
+    Complex u0;
+    Complex uCurrent;
+    int N;
     Complex c;
     int nPower;
 
 public:
-    RecSeqBrot() :RecSequence() {
+    RecSeqBrot() {
+        u0 = Complex();
+        uCurrent = u0;
+        N = 10000;
         c = Complex();
         nPower = 2;
     }
 
-    RecSeqBrot(Complex& u0Source, int NSource, Complex& cSource, int nPowerSource) :RecSequence(u0Source, NSource) {
+    RecSeqBrot(int NSource, Complex& cSource) {
+        u0 = Complex();
+        uCurrent = u0;
+        N = NSource;
         c = cSource;
-        nPower = nPowerSource;
+        nPower = 2;
     }
 
-    RecSeqBrot(Complex& cSource, int nPowerSource) :RecSequence() {
+    RecSeqBrot(Complex& u0Source, int NSource, Complex& cSource, int nPowerSource)  {
+        u0 = u0Source;
+        uCurrent = u0;
+        N = NSource;
         c = cSource;
         nPower = nPowerSource;
     }
 
     ~RecSeqBrot()  {
 
+    }
+
+    void SetU0(Complex& uSource){
+        u0 = uSource;
+    }
+
+    void SetUCurrent(Complex& uSource){
+        uCurrent = uSource;
+    }
+
+    void SetN(int NSource){
+        N = NSource;
     }
 
     void SetCValue(Complex& cSource) {

@@ -27,6 +27,8 @@ protected:
 private:
     uint rgbFromWaveLength(double wave);
     int getIterations(double& ax, double& ay);
+    int getIterationsBis(double& ax, double& ay, int MaxIterations);  // Version via Complex
+    int getIterations1(double& ax, double& ay, int MaxIterations);  // Version originale
     void SetCValue(double& ax, double& ay);
     void SetMaxIterationsValue(int MaxIterations);
 

@@ -33,8 +33,7 @@ HEADERS  += \
     mandelbrotwidget.h \
     renderthread.h \
     complex.h \
-    recseqbrot.h \
-    recsequence.h
+    recseqbrot.h
 
 FORMS    += \
     mandelbrotwidget.ui

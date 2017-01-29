@@ -19,6 +19,7 @@ RenderThread::RenderThread(QObject *parent)
         colormap[i] = rgbFromWaveLength(380.0 + (i * 400.0 / ColormapSize));
 
     //Creation de la Séquence de base
+
     currentSequence.SetU0(Complex());
     currentSequence.SetNPowerValue(2);
 }
@@ -30,7 +31,7 @@ RenderThread::~RenderThread()
     abort = true; //Booleen indiquant la fin de la thread
     condition.wakeOne(); //On reveille la thread si elle avait ete mise en pause
     mutex.unlock(); //debloque les variables
-
+    currentSequence.~RecSeqBrot();
     wait(); //Attend fin de la fonction run pour terminer la destruction
 }
 
@@ -79,12 +80,12 @@ void RenderThread::run()
 
             const int MaxIterations = (1 << (2 * pass + 6)) + 32; // = pow(2, 2*pass + 7) + 32
 
+            mutex.lock();
             this->SetMaxIterationsValue(MaxIterations);
+            mutex.unlock();
 
             bool allBlack = true;
 
-//            Complex cTest, c0;
-//            c0 = Complex::FromCartesian(0,0);
 
             for (int y = -halfHeight; y < halfHeight; ++y) {
                 if (restart)
@@ -100,12 +101,10 @@ void RenderThread::run()
 
                     double ax = centerX + (x * scaleFactor);
 
-
-
 //                    qDebug() << "Nombre d'itérations : " << numIterations;
 //                    qDebug() << "Max itérations : " << MaxIterations;
 
-                    int numIterations = getIterations(ax, ay);
+                    int numIterations = getIterations1(ax, ay, MaxIterations);
 
 
                     if (numIterations < MaxIterations) {
@@ -187,7 +186,9 @@ void RenderThread::SetMaxIterationsValue(int MaxIterations){
 
 int RenderThread::getIterations(double& ax, double& ay){
 
+    mutex.lock();
     this->SetCValue(ax,ay);
+    mutex.unlock();
 
 //    double a1 = ax;
 //    double b1 = ay;
@@ -207,6 +208,51 @@ int RenderThread::getIterations(double& ax, double& ay){
 //    } while (numIterations < MaxIterations);
 
     int numIterations = currentSequence.IsConvergent();
+
+    return numIterations;
+}
+
+int RenderThread::getIterationsBis(double& ax, double& ay, int MaxIterations){
+
+    Complex cx, c1, c2;
+    cx = Complex::FromCartesian(ax,ay);
+    c1 = Complex::FromCartesian(ax,ay);
+    int numIterations = 0;
+    do {
+        ++numIterations;
+        c2 = c1*c1 + cx;
+        if (c2.GetRadius() > 2)
+            break;
+
+        ++numIterations;
+        c1 = c2*c2 + cx;
+
+        if (c1.GetRadius() > 2)
+            break;
+    } while (numIterations < MaxIterations);
+
+
+    return numIterations;
+}
+
+int RenderThread::getIterations1(double& ax, double& ay, int MaxIterations){
+
+    double a1 = ax;
+    double b1 = ay;
+    int numIterations = 0;
+    do {
+        ++numIterations;
+        double a2 = (a1 * a1) - (b1 * b1) + ax;
+        double b2 = (2 * a1 * b1) + ay;
+        if ((a2 * a2) + (b2 * b2) > 4)
+            break;
+
+        ++numIterations;
+        a1 = (a2 * a2) - (b2 * b2) + ax;
+        b1 = (2 * a2 * b2) + ay;
+        if ((a1 * a1) + (b1 * b1) > 4)
+            break;
+    } while (numIterations < MaxIterations);
 
     return numIterations;
 }
