@@ -5,6 +5,7 @@ const double DefaultScale = 0.00403897f;
 const double ZoomInFactor = 0.8f;
 const double ZoomOutFactor = 1 / ZoomInFactor;
 const int ScrollStep = 20;
+const int DefaultPowerValue = 2;
 
 #include "mandelbrotwidget.h"
 
@@ -19,6 +20,27 @@ MandelbrotWidget::MandelbrotWidget(QWidget *parent)
     centerY = DefaultCenterY;
     pixmapScale = DefaultScale;
     curScale = DefaultScale;
+    powerValue = DefaultPowerValue;
+
+    connect(&thread, SIGNAL(renderedImage(QImage,double)), this, SLOT(updatePixmap(QImage,double)));
+
+    setWindowTitle(tr("Mandelbrot"));
+#ifndef QT_NO_CURSOR
+    setCursor(Qt::CrossCursor);
+#endif
+    resize(550, 400);
+
+}
+
+
+MandelbrotWidget::MandelbrotWidget(QWidget *parent, int nPowerValue)
+    : QWidget(parent)
+{
+    centerX = DefaultCenterX;
+    centerY = DefaultCenterY;
+    pixmapScale = DefaultScale;
+    curScale = DefaultScale;
+    powerValue = nPowerValue;
 
     connect(&thread, SIGNAL(renderedImage(QImage,double)), this, SLOT(updatePixmap(QImage,double)));
 
@@ -74,7 +96,7 @@ void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
 
 void MandelbrotWidget::resizeEvent(QResizeEvent * /* event */)
 {
-    thread.render(centerX, centerY, curScale, size());
+    thread.render(centerX, centerY, curScale, size(), powerValue);
 }
 
 
@@ -160,7 +182,7 @@ void MandelbrotWidget::zoom(double zoomFactor)
 {
     curScale *= zoomFactor;
     update();
-    thread.render(centerX, centerY, curScale, size());
+    thread.render(centerX, centerY, curScale, size(), powerValue);
 }
 
 
@@ -169,5 +191,6 @@ void MandelbrotWidget::scroll(int deltaX, int deltaY)
     centerX += deltaX * curScale;
     centerY += deltaY * curScale;
     update();
-    thread.render(centerX, centerY, curScale, size());
+    thread.render(centerX, centerY, curScale, size(), powerValue);
 }
+

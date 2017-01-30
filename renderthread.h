@@ -16,7 +16,7 @@ public:
     RenderThread(QObject *parent = 0);
     ~RenderThread();
 
-    void render(double centerX, double centerY, double scaleFactor, QSize resultSize);
+    void render(double centerX, double centerY, double scaleFactor, QSize resultSize, int powerValue);
 
 signals:
     void renderedImage(const QImage &image, double scaleFactor);
@@ -26,8 +26,8 @@ protected:
 
 private:
     uint rgbFromWaveLength(double wave);
-    int getIterations(double& ax, double& ay);
-    int getIterationsBis(double& ax, double& ay, int MaxIterations);  // Version via Complex
+    int getIterations(double& ax, double& ay, int MaxIterations);
+    int getIterationsUsingComplex(double& ax, double& ay, int MaxIterations, int nPower);  // Version via Complex
     int getIterations1(double& ax, double& ay, int MaxIterations);  // Version originale
     void SetCValue(double& ax, double& ay);
     void SetMaxIterationsValue(int MaxIterations);
@@ -37,11 +37,10 @@ private:
     double centerX;
     double centerY;
     double scaleFactor;
+    int powerValue;
     QSize resultSize;
     bool restart;
     bool abort;
-
-    RecSeqBrot currentSequence;
 
     enum { ColormapSize = 512 };
     uint colormap[ColormapSize];

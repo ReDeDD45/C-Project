@@ -10,6 +10,7 @@ class MandelbrotWidget : public QWidget
 
 public:
     MandelbrotWidget(QWidget *parent = 0);
+    MandelbrotWidget(QWidget *parent = 0, int nPowerValue =2);
 
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
@@ -37,6 +38,8 @@ private:
     double centerY;
     double pixmapScale;
     double curScale;
+
+    int powerValue;
 };
 
 #endif // MandelbrotWidget_H

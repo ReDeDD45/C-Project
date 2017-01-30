@@ -27,13 +27,14 @@ INCLUDEPATH = "C:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"
 SOURCES += main.cpp \
     mandelbrotwidget.cpp \
     renderthread.cpp \
-    complex.cpp
+    complex.cpp \
+    feature_wind.cpp
 
 HEADERS  += \
     mandelbrotwidget.h \
     renderthread.h \
     complex.h \
-    recseqbrot.h
+    feature_wind.h
 
 FORMS    += \
     mandelbrotwidget.ui
